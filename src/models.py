@@ -167,13 +167,14 @@ class Favorite(db.Model):
     starships_id= db.Column(db.Integer, db.ForeignKey("starships.id"))
     vehicles_id= db.Column(db.Integer, db.ForeignKey("vehicles.id"))
 
+
     def __repr__(self):
         return '<Favorite %r>' % self.id
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name_id,
+            "name": self.name,
             "user_id": self.user_id,
             "people_id": self.people_id,
             "planets_id": self.planets_id,
