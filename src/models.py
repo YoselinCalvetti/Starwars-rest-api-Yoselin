@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy.orm import relationship
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -9,7 +9,7 @@ class User(db.Model):
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.id
 
     def serialize(self):
         return {
@@ -62,7 +62,7 @@ class Planets(db.Model):
     residents = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<Planets %r>' % self.username
+        return '<Planets %r>' % self.id
 
     def serialize(self):
         return {
@@ -75,7 +75,7 @@ class Planets(db.Model):
             "gravity": self.gravity,
             "terrain": self.terrain,
             "surface_water": self.surface_water,
-            "population": self.surface_population,
+            "population": self.population,
             "residents": self.residents,
             # do not serialize the password, its a security breach
         }
@@ -167,6 +167,11 @@ class Favorite(db.Model):
     starships_id= db.Column(db.Integer, db.ForeignKey("starships.id"))
     vehicles_id= db.Column(db.Integer, db.ForeignKey("vehicles.id"))
 
+    user = relationship("User", backref="favorite")
+    people = relationship("People", backref="favorite")
+    planets = relationship("Planets", backref="favorite")
+    starships = relationship("Starships", backref="favorite")
+    vehicles = relationship("Vehicles", backref="favorite")
 
     def __repr__(self):
         return '<Favorite %r>' % self.id
