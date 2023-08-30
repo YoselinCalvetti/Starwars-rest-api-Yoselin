@@ -240,6 +240,50 @@ def get_one_favorite(favorite_id):
 
     return jsonify(response_body), 200
 
+#obtener de un planet
+@app.route('/planets', methods=['POST'])
+def create_planets():
+    request_body = request.json
+    print(request_body)
+
+    planets_query = Planets.query.filter_by(name=request_body["name"]).first()
+    print(planets_query)
+
+    if  planets_query is None:
+          new_planets = Planets(name=request_body["name"], population=request_body["population"])
+          db.session.add(new_planets)
+          db.session.commit()
+        #   return jsonify({"msg":"El planeta no existe"}), 404
+
+          response_body = {
+             "msg": "Planeta creado",
+        #  "result": planets_query.serialize()
+          }
+
+          return jsonify(response_body), 200
+    else:
+          return jsonify({"msg":"planeta ya existente"}), 400
+    
+#obtener de favorito
+@app.route('/favorites', methods=['POST'])
+def create_favorite():
+    request_body = request.json
+
+    favorite = Favorite.query.filter_by(user=request_body["user_id"], planet_id=request_body["planet_id"]).first()
+
+    if favorite is None:
+        new_favorite = Favorite(user=request_body["user_id"], planet_id=request_body["planet_id"])
+        db.session.add(new_favorite)
+        db.session.commit()
+
+        response_body = {
+            "msg": "Favorito creado"
+        }
+
+        return jsonify(response_body), 200
+    else:
+        return jsonify({"msg": "El favorito ya existe"}), 400   
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
